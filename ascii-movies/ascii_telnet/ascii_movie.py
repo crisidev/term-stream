@@ -26,6 +26,8 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 from __future__ import division, print_function
+import os
+import random
 
 
 class Frame(object):
@@ -114,7 +116,7 @@ class TimeBar(object):
 
 
 class Movie(object):
-    def __init__(self, width=80, height=24):
+    def __init__(self, folderpath, width=80, height=24):
         """
         A Movie object consists of frames and is empty by default.
         Movies are loaded from text files.
@@ -139,8 +141,9 @@ class Movie(object):
 
         self.left_margin = (self.screen_width - self._frame_width) // 2
         self.top_margin = (self.screen_height - self._frame_height - TimeBar.height) // 2
+        self.folderpath = folderpath
 
-    def load(self, filepath):
+    def load(self):
         """
         Loads the ASCII movie from given text file.
         Using an encoded format, described on
@@ -161,6 +164,8 @@ class Movie(object):
         self.frames = []
         current_frame = None
         lines_per_frame = self._frame_height + TimeBar.height  # incl. meta data (time information)
+
+        filepath = os.path.join(os.path.abspath(self.folderpath), random.choice(os.listdir(self.folderpath)))
 
         with open(filepath) as f:
             for line_num, line in enumerate(f):

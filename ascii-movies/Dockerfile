@@ -1,6 +1,5 @@
-#FROM arm32v7/python:3.6-alpine3.10
-FROM crisidev/gotty as builder
-FROM python:3.7-alpine
+FROM crisidev/gotty:linux-arm as builder
+FROM arm32v7/python:3.6-alpine3.10
 
 RUN mkdir /app
 WORKDIR /app

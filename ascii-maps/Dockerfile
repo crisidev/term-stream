@@ -1,5 +1,4 @@
-FROM crisidev/gotty as builder
-#FROM arm32v7/node:12-buster-slim
+FROM crisidev/gotty:linux-arm as builder
 FROM node:12-alpine
 
 CMD npm install -g mapscii

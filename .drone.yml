@@ -1,0 +1,43 @@
+kind: pipeline
+name: default
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: publish 
+  image: plugins/docker
+  settings:
+    repo: crisidev/term-stream
+    auto_tag: true
+    auto_tag_suffix: linux-arm
+    username:
+      from_secret: docker_username
+    password: 
+      from_secret: docker_password
+
+- name: notify
+  image: plugins/irc:linux-arm
+  settings:
+    host: irc.freenode.net
+    nick: crisibot
+    channel: "#crisidev"
+    prefix: "Drone CI: "
+    template: "Build: *{{build.status}}* {{repo.owner}}/{{repo.name}}#{{truncate build.commit 8}} ({{build.branch}}) by {{build.author}} - {{build.link}}"
+    enable_tls: false
+  failure: ignore
+  when:
+  status:
+  - success
+  - failure
+
+---
+kind: secret
+name: docker_username
+data: fdg0gyOVzFidDDVFGz8ES1curtk1G5QRUog3jHspPyqb7Bcu
+
+---
+kind: secret
+name: docker_password
+data: ivX6JJPq+MmsyFU1FKfbaxCxvb8/6hRKYMMNJ3GJb9hOc5LG3Pv8MqC4QA==

@@ -50,11 +50,11 @@ class TelnetRequestHandler(StreamRequestHandler):
     @see: SocketServer.StreamRequestHandler
     """
 
-    filename = None  # filename is set once, so it's immutable and safe for multi threading
+    folder = None  # filename is set once, so it's immutable and safe for multi threading
 
     def handle(self):
-        movie = Movie()
-        movie.load(TelnetRequestHandler.filename)
+        movie = Movie(TelnetRequestHandler.folder)
+        movie.load()
 
         self.player = VT100Player(movie)
         self.player.draw_frame = self.draw_frame

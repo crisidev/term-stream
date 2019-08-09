@@ -52,7 +52,7 @@ from ascii_telnet.ascii_player import VT100Player
 from ascii_telnet.ascii_server import TelnetRequestHandler, ThreadedTCPServer
 
 
-def runTcpServer(interface, port, filename):
+def runTcpServer(interface, port, folder):
     """
     Start a TCP server that a client can connect to that streams the output of
      Ascii Player
@@ -62,12 +62,12 @@ def runTcpServer(interface, port, filename):
         port (int): bind to this port
         filename (str): file name of the ASCII movie
     """
-    TelnetRequestHandler.filename = filename
+    TelnetRequestHandler.folder = folder
     server = ThreadedTCPServer((interface, port), TelnetRequestHandler)
     server.serve_forever()
 
 
-def runStdOut(filepath):
+def runStdOut(folder):
     """
     Stream the output of the Ascii Player to STDOUT
     Args:
@@ -77,8 +77,8 @@ def runStdOut(filepath):
     def draw_frame_to_stdout(screen_buffer):
         sys.stdout.write(screen_buffer.read().decode('iso-8859-15'))
 
-    movie = Movie()
-    movie.load(filepath)
+    movie = Movie(folder)
+    movie.load()
     player = VT100Player(movie)
     player.draw_frame = draw_frame_to_stdout
     player.play()
@@ -94,7 +94,7 @@ if __name__ == "__main__":
                            "instead of stand alone TCP server. " +
                            "Use with python option '-u' for unbuffered " +
                            "STDIN STDOUT communication")
-    parser.add_option("-f", "--file", dest="filename", metavar="FILE",
+    parser.add_option("-f", "--folder", dest="folder", metavar="FOLDER",
                       help="Text file containing the ASCII movie")
     parser.add_option("-i", "--interface", dest="interface",
                       help="Bind to this interface (default '0.0.0.0', all interfaces)",
@@ -112,16 +112,17 @@ if __name__ == "__main__":
                         verbose=True, )
     options = parser.parse_args()[0]
 
-    if not (options.filename and os.path.exists(options.filename)):
-        parser.exit(1, "Error, file not found! See --help for details.\n")
+    if not (options.folder and os.path.exists(options.folder)):
+        parser.exit(1, "Error, movies folder not found! See --help for details.\n")
 
     try:
+        folder = os.path.abspath(options.folder)
         if options.tcpserv:
             if options.verbose:
                 print("Running TCP server on {0}:{1}".format(options.interface, options.port))
-                print("Playing movie {0}".format(options.filename))
-            runTcpServer(options.interface, options.port, options.filename)
+                print("Playing movies from {0}".format(folder))
+            runTcpServer(options.interface, options.port, folder)
         else:
-            runStdOut(options.filename)
+            runStdOut(folder)
     except KeyboardInterrupt:
         print("Ascii Player Quit.")

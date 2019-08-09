@@ -28,6 +28,7 @@ from __future__ import division, print_function
 
 import sys
 import time
+import random
 from io import BytesIO
 
 from ascii_telnet.ascii_movie import TimeBar
