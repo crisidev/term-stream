@@ -17,6 +17,17 @@ steps:
     password: 
       from_secret: docker_password
 
+- name: deploy
+  image: appleboy/drone-ssh
+  settings:
+    host: www.crisidev.org
+    username:
+      from_secret: ssh_username
+    password: 
+      from_secret: ssh_password
+    script:
+      - sudo crisidev-deploy term-stream
+
 - name: notify
   image: plugins/irc:linux-arm
   settings:
@@ -31,6 +42,16 @@ steps:
   status:
   - success
   - failure
+
+---
+kind: secret
+name: ssh_username
+data: U+r4e5Zn2JcNAAyVjKkXWx9UTX4VhLJV9R78qMj3
+
+---
+kind: secret
+name: ssh_password
+data: rFs5neZAQ0J4cWN5K8565NLk1VVov3Xbdycmege7R1lu4GJnKMsBNK+ytvQ=
 
 ---
 kind: secret
